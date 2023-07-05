@@ -10,41 +10,26 @@ using namespace std;
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
 
-    kiko::g_memoryTracker.DisplayInfo();
+    kiko::Renderer renderer;
+    renderer.Initialize();
+    renderer.CreateWindow("CSC195", 800, 600);
 
-    int* p = new int;
-    kiko::g_memoryTracker.DisplayInfo();
+    while (true) {
 
-    delete p;
-    kiko::g_memoryTracker.DisplayInfo();
+        renderer.SetColor(0, 0, 0, 0);
+        renderer.BeginFrame();
 
+        for (int i = 0; i < 1000; i++) {
 
-    /*auto start = chrono::high_resolution_clock::now();
-    
-    for (int i = 0; i < 129831; i++) {}
-    
-    auto end = chrono::high_resolution_clock::now();
+            renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
+            renderer.DrawPoint(kiko::random(renderer.GetWidth()), kiko::random(renderer.GetHeight()));
 
-    cout << chrono::duration_cast<chrono::nanoseconds>(end - start).count();*/
-    /*cout << kiko::getFilePath() << endl;
-    kiko::setFilePath("../Assets");
-    cout << kiko::getFilePath() << endl << endl;
+        }
+        renderer.EndFrame();
 
-    size_t size;
-    kiko::getFileSize("game.txt", size);
-    cout << "Game.txt size: " << size << endl << endl;
+    }
 
-    std::string s;
-    kiko::readFile("game.txt", s);
-    cout << s << endl << endl;
-
-    kiko::seedRandom( (unsigned int) time(nullptr) );
-    for (int i = 0; i < 10; i++) {
-
-        cout << kiko::random(5, 20) << endl;
-
-    }*/
-
+    return 0;
 }
