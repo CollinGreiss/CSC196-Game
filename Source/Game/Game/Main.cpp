@@ -2,6 +2,8 @@
 
 #include "Core/Core.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/Model.h"
+#include "Input/InputSystem.h"
 
 using namespace std;
 
@@ -38,20 +40,61 @@ int main(int argc, char* argv[]) {
     renderer.Initialize();
     renderer.CreateWindow("CSC195", 800, 600);
 
+    kiko::InputSystem inputSystem;
+    inputSystem.Initialize();
+
+    std::vector<kiko::vec2> points{};
+
     vector<Star> stars;
-    for (int i = 0; i < 1000; i++) {
+    kiko::Model model;
+
+    bool clicked = false;
+    bool draw = false;
+
+    bool quit = false;
+    while (!quit) {
+
+        inputSystem.Update();
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
+
+            quit = true;
+            
+        }
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_RETURN)) {
+
+            if (!draw) {
+
+                model = kiko::Model(points);
+                draw = true;
+
+            }
+
+        }
+
+        if (inputSystem.GetMouseButtonDown(0)) {
+
+            if (!clicked) {
+
+                points.push_back({ inputSystem.GetMousePosition().x, inputSystem.GetMousePosition().y });
+                stars.push_back(Star({ inputSystem.GetMousePosition().x, inputSystem.GetMousePosition().y }, { 0, 0 }));
+
+            }
+
+            clicked = true;
+
+        } else {
         
-        kiko::Vector2 pos(kiko::Vector2(kiko::random(renderer.GetWidth()), kiko::random(renderer.GetHeight())));
-        kiko::Vector2 vel(kiko::randomf(1, 4), 0.0f);
-
-        stars.push_back(Star(pos, vel));
-
-    }
-
-    while (true) {
+            clicked = false;
+        
+        }
 
         renderer.SetColor(0, 0, 0, 0);
         renderer.BeginFrame();
+
+        if (draw) {
+            renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
+            model.Draw(renderer, { 0 , 0 }, 1);
+        }
 
         kiko::Vector2 vel(1.0f, 0.3f);
 

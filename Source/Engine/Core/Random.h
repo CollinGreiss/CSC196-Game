@@ -3,7 +3,7 @@
 
 namespace kiko {
 
-	void seedRandom(unsigned int seed) { srand(seed); }
+	inline void seedRandom(unsigned int seed) { srand(seed); }
 	
 	int random() { return rand(); }
 	int random(unsigned int max) { return rand() % max; }
