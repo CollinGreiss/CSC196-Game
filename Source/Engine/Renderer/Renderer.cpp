@@ -49,21 +49,33 @@ namespace kiko {
 
     }
 
-    void Renderer::DrawPoint(int x, int y) {
-
-        SDL_RenderDrawPoint(m_renderer, x, y);
-
-    }
-
     void Renderer::DrawLine(float x1, float y1, float x2, float y2) {
 
         SDL_RenderDrawLine(m_renderer, x1, y1, x2, y2);
 
     }
 
+    void Renderer::DrawLine(vec2& p1, vec2& p2) {
+
+        SDL_RenderDrawLine(m_renderer, p1.x, p1.y, p2.x, p2.y);
+
+    }
+
+    void Renderer::DrawPoint(int x, int y) {
+
+        SDL_RenderDrawPoint(m_renderer, x, y);
+
+    }
+
     void Renderer::DrawPoint(float x, float y) {
 
         SDL_RenderDrawPoint(m_renderer, x, y);
+
+    }
+
+    void Renderer::DrawPoint(vec2& p) {
+
+        SDL_RenderDrawPoint(m_renderer, p.x, p.y);
 
     }
 

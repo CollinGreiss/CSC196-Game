@@ -4,6 +4,7 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
 #include "Input/InputSystem.h"
+#include <thread>
 
 using namespace std;
 
@@ -13,7 +14,10 @@ public:
 
     Star(const kiko::Vector2& pos, const kiko::Vector2& vel) : m_pos{ pos }, m_vel{ vel } {}
     void Update(int width, int height) { 
-        m_pos += m_vel; 
+
+        m_vel.y += kiko::randomf(-20, 20);
+
+        m_pos += m_vel * kiko::g_time.GetDeltaTime();
 
         if (m_pos.x > width)
             m_pos.x = 0;
@@ -23,6 +27,13 @@ public:
             m_pos.y = 0;
         if (m_pos.y < 0)
             m_pos.y = height;
+    }
+
+    void Draw(kiko::Renderer& renderer) {
+
+        renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
+        renderer.DrawPoint(m_pos);
+
     }
 
 public:
@@ -35,6 +46,7 @@ public:
 int main(int argc, char* argv[]) {
 
     kiko::seedRandom((unsigned int)time(nullptr));
+    kiko::setFilePath("assets");
 
     kiko::Renderer renderer;
     renderer.Initialize();
@@ -43,67 +55,47 @@ int main(int argc, char* argv[]) {
     kiko::InputSystem inputSystem;
     inputSystem.Initialize();
 
-    std::vector<kiko::vec2> points{};
+    kiko::vec2 position{400, 300};
+    float speed =  150;
 
     vector<Star> stars;
     kiko::Model model;
-
-    bool clicked = false;
-    bool draw = false;
+    model.Load("ship.txt");
 
     bool quit = false;
     while (!quit) {
 
+        kiko::g_time.Tick();
+
+#pragma region Inputs
+
         inputSystem.Update();
-        if (inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) {
 
-            quit = true;
-            
-        }
-        if (inputSystem.GetKeyDown(SDL_SCANCODE_RETURN)) {
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
 
-            if (!draw) {
+        kiko::vec2 direction;
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_W)) direction.y = -1;
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_S)) direction.y = 1;
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
+        if (inputSystem.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
 
-                model = kiko::Model(points);
-                draw = true;
+        position += direction * speed * kiko::g_time.GetDeltaTime();
 
-            }
+        if (inputSystem.GetMouseButtonDown(0))
+            stars.push_back(Star(inputSystem.GetMousePosition(), { kiko::randomf(100, 200), 0.0f }));
 
-        }
-
-        if (inputSystem.GetMouseButtonDown(0)) {
-
-            if (!clicked) {
-
-                points.push_back({ inputSystem.GetMousePosition().x, inputSystem.GetMousePosition().y });
-                stars.push_back(Star({ inputSystem.GetMousePosition().x, inputSystem.GetMousePosition().y }, { 0, 0 }));
-
-            }
-
-            clicked = true;
-
-        } else {
-        
-            clicked = false;
-        
-        }
+#pragma endregion
 
         renderer.SetColor(0, 0, 0, 0);
         renderer.BeginFrame();
 
-        if (draw) {
-            renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
-            model.Draw(renderer, { 0 , 0 }, 1);
-        }
-
-        kiko::Vector2 vel(1.0f, 0.3f);
+        renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
+        model.Draw(renderer, position, 1);
 
         for (auto& star : stars) {
 
             star.Update(renderer.GetWidth(), renderer.GetHeight());
-
-            renderer.SetColor(kiko::random(256), kiko::random(256), kiko::random(256), 255);
-            renderer.DrawPoint(star.m_pos.x, star.m_pos.y);
+            star.Draw(renderer);
 
         }
 

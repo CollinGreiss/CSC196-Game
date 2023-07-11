@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Vector2.h"
+#include "Core/Core.h"
 #include "Renderer.h"
 #include <vector>
 
@@ -12,7 +12,9 @@ namespace kiko {
 	public:
 
 		Model() = default;
-		Model(std::vector<vec2>& points) : m_points{ points } {}
+		Model(std::vector<vec2> points) : m_points{ points } {}
+
+		bool Load(const std::string& filename);
 
 		void Draw(Renderer& renderer, const vec2& position, float scale);
 
