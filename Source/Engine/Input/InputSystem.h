@@ -33,4 +33,6 @@ namespace kiko {
 
 	};
 
+	extern InputSystem g_inputSystem;
+
 }

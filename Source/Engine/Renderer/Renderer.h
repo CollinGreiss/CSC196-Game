@@ -42,4 +42,6 @@ namespace kiko {
 
 	};
 
+	extern Renderer g_renderer;
+
 }
