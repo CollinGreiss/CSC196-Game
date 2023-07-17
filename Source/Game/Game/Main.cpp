@@ -5,6 +5,7 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Model.h"
 
+#include "Audio/AudioSystem.h"
 #include "Input/InputSystem.h"
 
 #include "Player.h"
@@ -21,6 +22,11 @@ int main(int argc, char* argv[]) {
 
     kiko::g_renderer.Initialize();
     kiko::g_renderer.CreateWindow("CSC195", 800, 600);
+
+    kiko::AudioSystem audioSystem;
+    audioSystem.Initialize();
+
+    audioSystem.AddAudio("laser", "laser.wav");
 
     kiko::g_inputSystem.Initialize();
 
@@ -44,11 +50,19 @@ int main(int argc, char* argv[]) {
 
         kiko::g_time.Tick();
 
+        audioSystem.Update();
+
         kiko::g_inputSystem.Update();
         if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
 
+        if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_SPACE)) {
+
+            audioSystem.PlayOneShot("laser");
+
+        }
+
         player.Update(kiko::g_time.GetDeltaTime());
-        for (auto enemy : enemies)
+        for (auto& enemy : enemies)
             enemy.Update(kiko::g_time.GetDeltaTime());
 
         ///////
