@@ -8,76 +8,76 @@
 #include "Audio/AudioSystem.h"
 #include "Input/InputSystem.h"
 
+#include "Framework/Scene.h"
 #include "Player.h"
 #include "Enemy.h"
 
 #include <thread>
 
 using namespace std;
+using namespace kiko;
 
 int main(int argc, char* argv[]) {
 
-    kiko::seedRandom((unsigned int)time(nullptr));
-    kiko::setFilePath("assets");
+    /////Setup
 
-    kiko::g_renderer.Initialize();
-    kiko::g_renderer.CreateWindow("CSC195", 800, 600);
+    seedRandom((unsigned int)time(nullptr));
+    setFilePath("assets");
 
-    kiko::AudioSystem audioSystem;
-    audioSystem.Initialize();
+    g_renderer.Initialize();
+    g_renderer.CreateWindow("CSC195", 800, 600);
 
-    audioSystem.AddAudio("laser", "laser.wav");
+    g_audioSystem.Initialize();
+    g_audioSystem.AddAudio("laser", "laser.wav");
 
-    kiko::g_inputSystem.Initialize();
+    g_inputSystem.Initialize();
 
-    Player player{ 150, kiko::DegToRad(270.0f), { {400, 300}, 0, 3}, {"ship.txt"} };
+    ////////Things
 
-    std::vector<Enemy> enemies;
-    for (int i = 0; i < 1; i++)
-        enemies.push_back ({
+    Scene scene;
+
+    scene.Add(std::make_unique<Player>( 150.0f, DegToRad(270.0f), Transform{ {400, 300}, 0, 3}, Model{"ship.txt"} ));
+
+    for (int i = 0; i < 5; i++)
+        scene.Add(std::make_unique <Enemy> (
             150,
             kiko::DegToRad(270.0f),
-            kiko::Transform { 
-                { kiko::randomf(kiko::g_renderer.GetWidth()), kiko::randomf(kiko::g_renderer.GetHeight()) },
+            Transform { 
+                { kiko::randomf(g_renderer.GetWidth()), kiko::randomf(g_renderer.GetHeight()) },
                 kiko::randomf(kiko::TwoPi), 
                 2 
             },
-           { "ship.txt" }
-        });
+           Model{ "enemy.txt" }
+        ));
+
+
+    ////// Game Loop
 
     bool quit = false;
     while (!quit) {
 
-        kiko::g_time.Tick();
+        ///// Updates
 
-        audioSystem.Update();
+        g_time.Tick();
 
-        kiko::g_inputSystem.Update();
-        if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
+        g_audioSystem.Update();
 
-        if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_SPACE)) {
+        g_inputSystem.Update();
+        if (g_inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
+        if (g_inputSystem.GetKeyDown(SDL_SCANCODE_GRAVE) && !g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_GRAVE))
+            g_memoryTracker.DisplayInfo();
 
-            audioSystem.PlayOneShot("laser");
+        scene.Update(g_time.GetDeltaTime());
 
-        }
+        /////// Drawing
 
-        player.Update(kiko::g_time.GetDeltaTime());
-        for (auto& enemy : enemies)
-            enemy.Update(kiko::g_time.GetDeltaTime());
+        g_renderer.SetColor(0, 0, 0, 0);
+        g_renderer.BeginFrame();
 
-        ///////
+        g_renderer.SetColor(255, 255, 255, 255);
+        scene.Draw(g_renderer);
 
-        kiko::g_renderer.SetColor(0, 0, 0, 0);
-        kiko::g_renderer.BeginFrame();
-
-        kiko::g_renderer.SetColor(255, 255, 255, 255);
-        player.Draw(kiko::g_renderer);
-        
-        kiko::g_renderer.SetColor(255, 0, 0, 255);
-        for (auto enemy : enemies)
-            enemy.Draw(kiko::g_renderer);
-
-        kiko::g_renderer.EndFrame();
+        g_renderer.EndFrame();
 
     }
 

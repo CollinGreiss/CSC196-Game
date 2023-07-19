@@ -1,7 +1,7 @@
 #pragma once
-#include "Actor.h"
+#include "Framework/Actor.h"
 
-class Enemy : public Actor {
+class Enemy : public kiko::Actor {
 
 public:
 

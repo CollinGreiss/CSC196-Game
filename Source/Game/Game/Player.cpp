@@ -1,5 +1,9 @@
 #include "Player.h"
+#include "Projectile.h"
+
+#include "Framework/Scene.h"
 #include "Input/InputSystem.h"
+#include "Audio/AudioSystem.h"
 
 void Player::Update(float dt) {
 
@@ -18,5 +22,14 @@ void Player::Update(float dt) {
     m_transform.position += forward * m_speed * thrust * kiko::g_time.GetDeltaTime() * ((sprint) ? 2 : 1);
     m_transform.position.x = kiko::Wrap(m_transform.position.x, kiko::g_renderer.GetWidth());
     m_transform.position.y = kiko::Wrap(m_transform.position.y, kiko::g_renderer.GetHeight());
+
+
+
+    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !kiko::g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
+
+        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>( 400.0f, kiko::Transform{m_transform.position, m_transform.rotation, 1}, m_model);
+        m_scene->Add(std::move(projectile));
+    
+    }
 
 }

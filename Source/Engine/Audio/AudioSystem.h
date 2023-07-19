@@ -24,4 +24,6 @@ namespace kiko {
 
 	};
 
+	extern AudioSystem g_audioSystem;
+
 }
