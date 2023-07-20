@@ -7,6 +7,8 @@
 
 void Player::Update(float dt) {
 
+    Actor::Update(dt);
+
     bool sprint = kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_LSHIFT);
 
     float rotate = 0;
@@ -27,9 +29,13 @@ void Player::Update(float dt) {
 
     if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !kiko::g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
 
-        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>( 400.0f, kiko::Transform{m_transform.position, m_transform.rotation, 1}, m_model);
+        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>( 400.0f, kiko::Transform{m_transform.position, m_transform.rotation, 1}, m_model, "Player");
         m_scene->Add(std::move(projectile));
     
     }
 
+}
+
+void Player::OnCollision(Actor* other)
+{
 }

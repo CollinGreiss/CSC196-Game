@@ -3,7 +3,7 @@
 #include "Core/Core.h"
 
 #include "Renderer/Renderer.h"
-#include "Renderer/Model.h"
+#include "Renderer/ModelManager.h"
 
 #include "Audio/AudioSystem.h"
 #include "Input/InputSystem.h"
@@ -18,6 +18,8 @@ using namespace std;
 using namespace kiko;
 
 int main(int argc, char* argv[]) {
+
+    MemoryTracker::Initialize();
 
     /////Setup
 
@@ -36,19 +38,21 @@ int main(int argc, char* argv[]) {
 
     Scene scene;
 
-    scene.Add(std::make_unique<Player>( 150.0f, DegToRad(270.0f), Transform{ {400, 300}, 0, 3}, Model{"ship.txt"} ));
+    //scene.Add(make_unique<Player>( 150.0f, DegToRad(270.0f), Transform{ {400, 300}, 0, 3}, g_modelManager.Get("ship.txt"), "Player"));
 
-    for (int i = 0; i < 5; i++)
-        scene.Add(std::make_unique <Enemy> (
-            150,
-            kiko::DegToRad(270.0f),
-            Transform { 
-                { kiko::randomf(g_renderer.GetWidth()), kiko::randomf(g_renderer.GetHeight()) },
-                kiko::randomf(kiko::TwoPi), 
-                2 
+    /*for (int i = 0; i < 1; i++)
+        scene.Add(make_unique <Enemy>(
+            randomf(75, 150),
+            DegToRad(270.0f),
+            Transform{
+                {randomf(g_renderer.GetWidth()), randomf(g_renderer.GetHeight()) },
+                randomf(kiko::TwoPi),
+                2
             },
-           Model{ "enemy.txt" }
-        ));
+            g_modelManager.Get("enemy.txt"),
+            randomf(1, 2),
+            "Enemy"
+        ));*/
 
 
     ////// Game Loop
@@ -64,8 +68,6 @@ int main(int argc, char* argv[]) {
 
         g_inputSystem.Update();
         if (g_inputSystem.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
-        if (g_inputSystem.GetKeyDown(SDL_SCANCODE_GRAVE) && !g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_GRAVE))
-            g_memoryTracker.DisplayInfo();
 
         scene.Update(g_time.GetDeltaTime());
 

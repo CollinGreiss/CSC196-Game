@@ -50,4 +50,15 @@ namespace kiko{
 
 	}
 
+	float Model::GetRadius() {
+
+		if (m_radius) return m_radius;
+
+		for (auto point : m_points)
+			m_radius = Max(m_radius, point.Length());
+
+		return m_radius;
+
+	}
+
 }
