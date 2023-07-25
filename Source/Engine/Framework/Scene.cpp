@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include <iostream>
 
 namespace kiko {
 
@@ -18,13 +17,11 @@ namespace kiko {
 
 			for (auto iter2 = std::next(iter1, 1); iter2 != m_actors.end(); iter2++) {
 
-				float distance = (*iter1)->m_transform.position.Distance((*iter2)->m_transform.position);
+				float distance = (*iter1)->GetTransform().position.Distance((*iter2)->GetTransform().position);
 				float radius = (*iter1)->GetRadius() + (*iter2)->GetRadius();
-				
-				std::cout << (*iter1)->GetRadius() << " - " << (*iter2)->GetRadius() << std::endl;
 
 				if (distance <= radius) {
-
+					
 					(*iter1)->OnCollision(iter2->get());
 					(*iter2)->OnCollision(iter1->get());
 

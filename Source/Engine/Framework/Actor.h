@@ -11,10 +11,12 @@ namespace kiko {
 	public:
 
 		Actor() = default;
-		Actor(const kiko::Transform& transform, std::shared_ptr<Model>& model, std::string tag) :
+		Actor(const kiko::Transform& transform, std::shared_ptr<Model>& model, std::string tag, float health, float lifespan = -1.0f) :
 			m_transform{ transform },
 			m_model{ model },
-			m_tag{ tag }
+			m_tag{ tag },
+			m_lifespan{ lifespan },
+			m_health{ health }
 		{}
 
 		virtual void Update(float dt);
@@ -22,20 +24,25 @@ namespace kiko {
 
 		virtual void OnCollision(Actor* other) {};
 
-		//float GetRadius() { return m_model.GetRadius() * m_transform.scale; }
-		float GetRadius() { return m_model->GetRadius(); }
+		float GetRadius() { return m_model->GetRadius() * m_transform.scale; }
+		float GetHealth() { return m_health; }
+		std::string GetTag() { return m_tag; }
+		Transform GetTransform() { return m_transform; }
+
+		virtual void Damage(float damage) { m_health -= damage; }
 
 		class Scene* m_scene = nullptr;
 		friend class Scene;
 
-		kiko::Transform m_transform;
-		std::string m_tag;
 
 	protected:
 
 		bool m_destroyed = false;
 		float m_lifespan = -1.0f;
+		float m_health = -1.0f;
 
+		Transform m_transform;
+		std::string m_tag;
 		std::shared_ptr<Model> m_model;
 
 	};

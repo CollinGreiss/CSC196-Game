@@ -2,7 +2,7 @@
 
 namespace kiko {
 
-	ModelManager g_modelManger;
+	ModelManager g_modelManager;
 
 	std::shared_ptr<Model> ModelManager::Get(const std::string& filename) {
 

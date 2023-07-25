@@ -1,6 +1,5 @@
 #include "Projectile.h"
 #include "Input/InputSystem.h"
-#include <iostream>
 
 void Projectile::Update(float dt) {
 
@@ -15,9 +14,11 @@ void Projectile::Update(float dt) {
 
 void Projectile::OnCollision(Actor* other) {
 
-    std::cout << other->m_tag << " - " << m_tag << std::endl;
+    if (other->GetTag() != GetTag()) {
 
-    if (other->m_tag != m_tag)
         m_destroyed = true;
+        other->Damage(m_damage);
+
+    }
 
 }
