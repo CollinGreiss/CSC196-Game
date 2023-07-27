@@ -5,8 +5,8 @@ class Player : public kiko::Actor {
 
 public:
 
-	Player(float health, float speed, float turnRate, const kiko::Transform& transform, std::shared_ptr<kiko::Model> model, std::string tag) :
-		Actor{ transform, model, tag, health },
+	Player(float health, float speed, float turnRate, const kiko::Transform& transform, std::shared_ptr<kiko::Model> model, std::string tag, float damping) :
+		Actor{ transform, model, tag, health, damping },
 		m_speed{ speed },
 		m_turnRate{ turnRate }
 	{}

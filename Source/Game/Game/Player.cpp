@@ -5,6 +5,8 @@
 #include "Input/InputSystem.h"
 #include "Audio/AudioSystem.h"
 
+#include <memory>
+
 void Player::Update(float dt) {
 
     Actor::Update(dt);
@@ -21,7 +23,8 @@ void Player::Update(float dt) {
     if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_S)) thrust = -1;
 
     kiko::vec2 forward = kiko::vec2{ 0, -1 }.Rotate(m_transform.rotation);
-    m_transform.position += forward * m_speed * thrust * kiko::g_time.GetDeltaTime() * ((sprint) ? 2 : 1);
+    AddForce(forward * m_speed * thrust * ((sprint) ? 2.0f : 1.0f));
+    
     m_transform.position.x = kiko::Wrap(m_transform.position.x, kiko::g_renderer.GetWidth());
     m_transform.position.y = kiko::Wrap(m_transform.position.y, kiko::g_renderer.GetHeight());
 
@@ -34,8 +37,10 @@ void Player::Update(float dt) {
             kiko::Transform{m_transform.position, m_transform.rotation, 1}, 
             m_model, 
             GetTag(),
-            10, 
-            2.0f);
+            10.0f, 
+            2.0f,
+            0.0f
+            );
 
         m_scene->Add(std::move(projectile));
     

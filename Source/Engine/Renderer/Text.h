@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Renderer.h"
 #include "Font.h"
 #include "Core/Color.h"

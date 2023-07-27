@@ -10,6 +10,9 @@ namespace kiko {
 		if (m_health <= 0 && m_health != -1.0f)
 			m_destroyed = true;
 
+		m_transform.position += m_velocity * dt;
+		m_velocity *= std::pow(1.0f - m_damping, dt);
+
 	}
 
 	void Actor::Draw(kiko::Renderer& renderer) {
