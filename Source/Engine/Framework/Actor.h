@@ -29,7 +29,7 @@ namespace kiko {
 
 		virtual void OnCollision(Actor* other) {};
 
-		float GetRadius() { return (m_model) ? m_model->GetRadius() * m_transform.scale : 0; }
+		float GetRadius() { return (m_model) ? m_model->GetRadius() * m_transform.scale : -10000; }
 		float GetHealth() { return m_health; }
 		std::string GetTag() { return m_tag; }
 		Transform GetTransform() { return m_transform; }
@@ -39,7 +39,7 @@ namespace kiko {
 		void AddForce(vec2 force) { m_velocity += force; }
 		void SetDamping(float damping) { m_damping = damping; }
 
-		virtual void Damage(float damage) { m_health -= damage; }
+		virtual void Damage(float damage) { if (m_health != -1.0f) m_health -= damage; }
 
 		class Scene* m_scene = nullptr;
 		friend class Scene;

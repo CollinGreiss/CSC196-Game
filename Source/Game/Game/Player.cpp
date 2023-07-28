@@ -11,40 +11,20 @@ void Player::Update(float dt) {
 
     Actor::Update(dt);
 
-    bool sprint = kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_LSHIFT);
+    kiko::vec2 up = kiko::vec2{ 0, -1 };
+    kiko::vec2 down = kiko::vec2{ 0, 1 };
+    kiko::vec2 right = kiko::vec2{ 1, 0 };
+    kiko::vec2 left = kiko::vec2{ -1, 0 };
 
-    float rotate = 0;
-    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_A)) rotate = -1;
-    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_D)) rotate = 1;
-    m_transform.rotation += rotate * m_turnRate * kiko::g_time.GetDeltaTime();
+    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_W) && !kiko::g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_W) && m_transform.position.y >= (kiko::g_renderer.GetHeight() - 28)) m_velocity.y = -300;
+    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_D)) m_velocity.x = m_speed;
+    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_A)) m_velocity.x = -m_speed;
+    if (!kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_D) && !kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_A)) m_velocity.x = 0;
 
-    float thrust = 0;
-    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_W)) thrust = 1;
-    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_S)) thrust = -1;
+    AddForce(down * 3.0f);
+    m_transform.position.x = kiko::Clamp(m_transform.position.x, 0.0f, (float) (kiko::g_renderer.GetWidth()));
+    m_transform.position.y = kiko::Clamp(m_transform.position.y, 0.0f, (float) (kiko::g_renderer.GetHeight() - 28));
 
-    kiko::vec2 forward = kiko::vec2{ 0, -1 }.Rotate(m_transform.rotation);
-    AddForce(forward * m_speed * thrust * ((sprint) ? 2.0f : 1.0f));
-    
-    m_transform.position.x = kiko::Wrap(m_transform.position.x, kiko::g_renderer.GetWidth());
-    m_transform.position.y = kiko::Wrap(m_transform.position.y, kiko::g_renderer.GetHeight());
-
-
-
-    if (kiko::g_inputSystem.GetKeyDown(SDL_SCANCODE_SPACE) && !kiko::g_inputSystem.GetPreviousKeyDown(SDL_SCANCODE_SPACE)) {
-
-        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>(
-            400.0f, 
-            kiko::Transform{m_transform.position, m_transform.rotation, 1}, 
-            m_model, 
-            GetTag(),
-            10.0f, 
-            2.0f,
-            0.0f
-            );
-
-        m_scene->Add(std::move(projectile));
-    
-    }
 
 }
 
